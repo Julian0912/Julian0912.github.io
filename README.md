@@ -6,7 +6,7 @@
 
 本博客外观基于 [码志](https://mzlogin.github.io) 修改，感谢！
 
-[!码志 README.md](https://github.com/Julian0912/Julian0912.github.io/blob/master/README_mzlogin.md)
+[码志 README.md](https://github.com/Julian0912/Julian0912.github.io/blob/master/README_mzlogin.md)
 
 ## 说明
 
