@@ -8,6 +8,8 @@ keywords: Python, Notes
 
 ---
 
+笔者在自学 Python 一段时间以后，通过一些自我总结写出来的自学笔记，未完结，应该也不会完结了。
+
 # Python自学笔记
 
 编者：Julian
