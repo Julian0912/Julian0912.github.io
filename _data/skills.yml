@@ -1,19 +1,16 @@
-- name: Software Engineer Keywords
+- name: 目标编程语言
   keywords:
-      - Java
-      - C++
+      - C/C++
       - Python
-      - Design Patterns
 
-- name: Mobile Developer Keywords
+- name: 兴趣
   keywords:
-      - Android
-      - Reverse Engineering
+      - 软件工程
+      - 空缺待补
 
-- name: Windows Developer Keywords
+- name: 其它
   keywords:
-      - Win32 SDK
-      - DuiLib
-      - WTL
-      - COM
-      - WinDbg
+      - 喜欢搞事
+      - 向往前端但觉得前端麻烦
+      - 自己实现一些没有用的小工具
+      - 正在努力学习中
