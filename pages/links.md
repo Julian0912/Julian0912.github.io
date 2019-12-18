@@ -8,6 +8,10 @@ menu: 链接
 permalink: /links/
 ---
 
+以下链接保留自 [码志](https://mazhuang.org/links/) 。
+
+
+
 > God made relatives. Thank God we can choose our friends.
 
 {% for link in site.data.links %}
@@ -23,3 +27,4 @@ permalink: /links/
 * [{{ link.name }}]({{ link.url }})
   {% endif %}
 {% endfor %}
+

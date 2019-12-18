@@ -1,14 +1,18 @@
 ---
 layout: page
 title: About
-description: 咕噜咕噜咕噜
-keywords: JulianFan, 何冥
+description: 想要每天开心到冒泡
+keywords: JulianFan, 何冥, 木子枫
 comments: false
 menu: 关于
 permalink: /about/
 ---
 
-冥冥世界，何处是家。
+喜欢搞技术，是因为觉得技术单纯，不像人情事故，总有那么多变故，那么多猜测。
+
+技术很简单，它就在哪里，只要你用心学，只要有个好的老师指导，总是能学会的。
+
+总是能学会的。
 
 ## 联系
 
