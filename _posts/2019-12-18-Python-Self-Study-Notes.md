@@ -1,11 +1,9 @@
 ---
-
 layout: post
 title: Python自学笔记
 categories: Python
 description: Python自学笔记
 keywords: Python, Notes
-
 ---
 
 笔者在自学 Python 一段时间以后，通过一些自我总结写出来的自学笔记，未完结，应该也不会完结了。
