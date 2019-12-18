@@ -8,3 +8,7 @@
 
 [!码志 README.md](https://github.com/Julian0912/Julian0912.github.io/blob/master/README_mzlogin.md)
 
+## 说明
+
+本博客保留了 [码志](https://mzlogin.github.io) 原博客的wiki和links。
+
