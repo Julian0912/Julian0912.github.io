@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Python自学笔记
-categories: [Programming, Python]
+categories: Programming
 description: Python自学笔记
 keywords: Python, Notes
 ---
