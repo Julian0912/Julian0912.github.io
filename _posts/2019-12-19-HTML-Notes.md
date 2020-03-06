@@ -1,7 +1,7 @@
 ---
 layout: post
 title: HTML 学习笔记
-categories: HTML
+categories: [Programming, HTML]
 description: HTML5学习示例
 keywords: HTML5, Notes
 ---

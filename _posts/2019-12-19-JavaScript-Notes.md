@@ -1,7 +1,7 @@
 ---
 layout: post
 title: JavaScript学习笔记
-categories: JavaScript
+categories: [Programming, JavaScript]
 description: JavaScript学习示例
 keywords: JavaScript, Notes
 ---
