@@ -216,13 +216,13 @@ if __name__ == '__main__':
 <form action="#">
     <p>用户名：<input type="text" /></p>
     <p>密　码：<input type="password" /></p>
-    <p>时　间：{% time %}</p>
+    <p>时　间：[% time %]</p>
 </form>
 </body>
 </html>
 ```
 
-`{% time %}`的符号实际上可以随便定义。然后在函数部分做如下改动：
+`[% time %]`的符号实际上可以随便定义。然后在函数部分做如下改动：
 
 ```python
 def f1(request):
@@ -231,7 +231,7 @@ def f1(request):
         d = file.read()
     import time
     ct = time.time()
-    d = d.replace('{% time %}', str(ct))
+    d = d.replace('[% time %]', str(ct))
     return bytes(d, encoding='utf8')  # 将字符串转为字节
 def f2(request):
     return b'visiting f2'
