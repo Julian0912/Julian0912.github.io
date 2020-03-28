@@ -267,15 +267,17 @@ routers = [
         <th>Sex</th>
         <th>Age</th>
     </tr>
-    \{\% for row in stu_ls \%\}
+    {% raw %}
+    {% for row in stu_ls %}
     <tr>
-        <td>\{\{row.name\}\}</td>
-        <td>\{\{row.sex\}\}</td>
-        <td>\{\{row.age\}\}</td>
+        <td>{{row.name}}</td>
+        <td>{{row.sex}}</td>
+        <td>{{row.age}}</td>
     </tr>
-    \{\% endfor \%\}
+    {% endfor %}
 </table>
-<p>From \{\{user\}\}</p>
+<p>From {{user}}</p>
+    {% endraw %}
 </body>
 </html>
 ```
