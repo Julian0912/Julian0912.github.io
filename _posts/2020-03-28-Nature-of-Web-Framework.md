@@ -247,3 +247,69 @@ routers = [
 
 而且被替换的可以是任何信息，python处理的字符串中可以包含`tr` `td`等页面标签，通过格式化在页面里插入表格等结构，表格内容可以是数据库数据，这样每当数据库数据发生变化，页面表格内容就会发生变化。
 
+#### 四、第三方渲染
+
+在上一节中，我们在替换模板信息的时候，用到了自己定义的符号`[% time %]`，但我们要自己创建规则很麻烦，所幸有人已经造好了轮子。python的第三方库jinja2可以用来渲染网页，即替换信息。
+
+我们新建一个网页文件`stulist.html`，如下：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>STUDENTS</title>
+</head>
+<body>
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Sex</th>
+        <th>Age</th>
+    </tr>
+    {% for row in stu_ls %}
+    <tr>
+        <td>{{row.name}}</td>
+        <td>{{row.sex}}</td>
+        <td>{{row.age}}</td>
+    </tr>
+    {% endfor %}
+</table>
+<p>From {{user}}</p>
+</body>
+</html>
+```
+
+其中的符号要遵循既定的规则。再在python代码中修改如此：
+
+```python
+def f1(request):
+    with open('index.html', 'r', encoding='utf8') as file:
+        d = file.read()
+    import time
+    ct = time.time()
+    d = d.replace('[% time %]', str(ct))
+    return bytes(d, encoding='utf8')
+def f2(request):
+    with open('stulist.html', 'r', encoding='utf8') as file:
+        df = file.read()
+    # 该数据可以从数据库或者文件中获得
+    students = [
+        {'name': 'FMY', 'sex': 'male', 'age': 20},
+        {'name': 'XLY', 'sex': 'female', 'age': 48},
+        {'name': 'FZR', 'sex': 'male', 'age': 47}
+    ]
+    from jinja2 import Template
+    template = Template(df)
+    # 参数名即模板中的变量名
+    dt = template.render(stu_ls=students, user='Nobody')
+    return dt.encode('utf8')
+routers = [
+    ('/xxx', f1),
+    ('/ooo', f2)
+]
+```
+
+这样，我们就不用自己写代码渲染了。只要我们遵循了既定规则，第三方库会帮我们渲染。
+
+但实际上在Django中我们也没用到jinja2去渲染，它使用了不同的渲染方法。但原理相同，只要我们使用规则写模板，就可以实现自动渲染。
