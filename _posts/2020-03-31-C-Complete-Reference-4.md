@@ -23,12 +23,32 @@ keywords:
 
 void func(const char* s)
 {
-    //s[5] = 'I'; //会报错，但如果参数不加const，不会报错，但貌似也没有输出
+    //s[5] = 'I'; //会报错，但如果参数不加const，就能正常修改，输出"this Is a test"
 }
 
 int main(void)
 {
-    char* str = "this is a test";
+    char str[15] = "this is a test";
+    func(str);
+    printf("%s\n", str);
+    return 0;
+}
+```
+
+如果使用指针修改，虽然目标字符可以修改成功，但修改部分以后的字符就无法输出了，暂时不明白原因，以后或许会回来说明。
+
+```c
+#include <stdio.h>
+
+void func(const char* s)
+{
+    int* p = &s[5];
+    *p = 'I';
+}
+
+int main(void)
+{
+    char str[15] = "this is a test";
     func(str);
     printf("%s\n", str);
     return 0;
