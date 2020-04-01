@@ -122,3 +122,65 @@ int main(void)
 
 用`register`修饰的变量不能用`&`寻址，因为寄存器无法编址。
 
+### 2.9 操作符
+
+#### 2.9.12 逗号(,)操作符
+
+逗号连接一串表达式，逗号左边求值为`void`型，一串表达式的最右侧为整个表达式的值。
+
+```c
+#include <stdio.h>
+
+int main(void)
+{
+    int x, y; //只能先定义
+    int a = (x = 4, y = 7, x + y); //必须加括号，因为逗号的优先级比赋值号低
+    printf("%d\n", a); //输出11
+    return 0;
+}
+```
+
+## 第三章 语句
+
+### 3.3 重复(Iteration)语句
+
+#### 3.3.1 for循环
+
+for语句的一般形式：
+
+```
+for (initialization; condition; increment) statement;
+```
+
+一般来说，`initialization`是赋值语句，`condition`是条件表达式，`increment`定义每次循环后如何修改变量。理论上三者都是**可选的**。
+
+程序的执行顺序：
+
+```
+initialization;
+condition;
+statement;
+increment;
+condition;
+statement;
+increment;
+condition;
+……
+```
+
+#### 3.3.3 无限循环
+
+当条件表达式不存在时，则认为它是正确的。
+
+```c
+#include <stdio.h>
+
+int main(void)
+{
+    for (;;) printf("run forever\n");
+    return 0;
+}
+```
+
+
+
