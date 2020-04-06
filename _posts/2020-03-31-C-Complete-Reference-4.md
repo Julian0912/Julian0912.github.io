@@ -654,19 +654,19 @@ Hello Julian
 
 char* match(char c, char* s)
 {
-	while (c != *s && *s) s++;
-	return s; //返回一个地址或者NULL
+    while (c != *s && *s) s++;
+    return s; //返回一个地址或者NULL
 }
 
 int main(void)
 {
-	char s[10], * p, ch;
-	gets_s(s, 10);
-	ch = getchar();
-	p = match(ch, s);
-	if (p) printf("%s\n", p);
-	else printf("Not found\n");
-	return 0;
+    char s[10], * p, ch;
+    gets_s(s, 10);
+    ch = getchar();
+    p = match(ch, s);
+    if (p) printf("%s\n", p);
+    else printf("Not found\n");
+    return 0;
 }
 ```
 
@@ -677,15 +677,15 @@ int main(void)
 
 int factr(int n)
 {
-	if (n == 1) return 1;
-	int answer = factr(n - 1) * n;
-	return answer;
+    if (n == 1) return 1;
+    int answer = factr(n - 1) * n;
+    return answer;
 }
 
 int main(void)
 {
-	printf("%d\n", factr(10));
-	return 0;
+    printf("%d\n", factr(10));
+    return 0;
 }
 ```
 
@@ -702,14 +702,14 @@ int sqr(int n);
 
 int main(void)
 {
-	int x = 10;
-	printf("%d %d\n", sqr(x), x);
-	return 0;
+    int x = 10;
+    printf("%d %d\n", sqr(x), x);
+    return 0;
 }
 
 int sqr(int n)
 {
-	return n * n;
+    return n * n;
 }
 ```
 
