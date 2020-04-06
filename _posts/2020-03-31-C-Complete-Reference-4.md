@@ -623,13 +623,13 @@ int main(void)
 
 int main(int argc, char* argv[])
 {
-	if (argc != 2)
-	{
-		printf("You have to type your name!\n");
-		exit(1);
-	}
-	printf("Hello %s\n", argv[1]); //第一个命令行变元(即argv[0])总是程序的名字
-	return 0;
+    if (argc != 2)
+    {
+        printf("You have to type your name!\n");
+        exit(1);
+    }
+    printf("Hello %s\n", argv[1]); //第一个命令行变元(即argv[0])总是程序的名字
+    return 0;
 }
 ```
 
