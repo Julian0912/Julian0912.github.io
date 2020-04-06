@@ -528,3 +528,300 @@ int main(void)
 
 ## 第六章 函数
 
+### 6.3 函数的变元
+
+变元就暂时理解为跟函数形参相对的实际参数吧。
+
+#### 6.3.1 值调用和引用调用
+
+像函数形参传递值时有两种方法，值调用传递的是**变元的拷贝**，函数内修改形参不会改变变元；引用调用传递的是**变元地址**，在函数内通过地址访问对象，对对象的修改也会改变变元。
+
+一般来说，C使用值调用向函数传递变元，这样函数内就不能修改实参。
+
+```c
+#include <stdio.h>
+
+int sqr(int x)
+{
+    x = x * x;
+    return x;
+}
+
+int main(void)
+{
+    int t = 10;
+    printf("%d %d", sqr(t), t); //t还是10
+    return 0;
+}
+```
+
+#### 6.3.2 引用调用
+
+下面是一个引用调用的例子：
+
+```c
+#include <stdio.h>
+
+void swap(int* x, int* y)
+{
+    int temp;
+    temp = *x;
+    *x = *y;
+    *y = temp;
+}
+
+int main(void)
+{
+    int i = 10, j = 20;
+    printf("before: %d %d\n", i, j);
+    swap(&i, &j); //注意传递的是地址
+    printf("after: %d %d\n", i, j);
+    return 0;
+}
+```
+
+#### 6.3.3 用数组调用
+
+向函数传递数组时，实际传递的是数组的地址，所以这是一个标准值调用的例外。这种情况下，函数内对数组的修改实际是修改了真正的数组（这跟python列表作函数参数时相似），观察下例
+
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+void print_upper(char* s)
+{
+    for (int i = 0; s[i]; i++)
+    {
+        s[i] = toupper(s[i]);
+        putchar(s[i]);
+    }
+    printf("\n");
+}
+
+
+int main(void)
+{
+    char str[80];
+    gets_s(str, 80);
+    print_upper(str);
+    printf("%s\n", str); //实际数组也被修改了
+    return 0;
+}
+```
+
+如果不想修改实际的数组，可以把`print_upper()`中`for`循环内的语句换成`putchar(toupper(s[i]))`。
+
+### 6.4 main()的变元argc和argv
+
+有时需要向程序传入信息。我们一般通过命令行变元向主函数`main()`传递信息。命令行变元是操作系统命令行中执行程序名字之后的信息。
+
+有两个内设参量用于接受命令行变元，一个是`argc`，另一个是`argv`。`argc`是整型变量，存放命令行中变元的总数，因为程序名也算一个，所以`argc`的值最小为1；`argv`是指针，指向由字符串指针组成的数组（即字符串数组），数组中每个元素指向一个命令行变元，所有命令行变元都是字符串。观察下例
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(int argc, char* argv[])
+{
+	if (argc != 2)
+	{
+		printf("You have to type your name!\n");
+		exit(1);
+	}
+	printf("Hello %s\n", argv[1]); //第一个命令行变元(即argv[0])总是程序的名字
+	return 0;
+}
+```
+
+**注意`argv`的声明方式**。假设文件名叫`temp.c`，在命令行中输入如下语句
+
+```
+PC > gcc temp.c -o temp.exe
+PC > ./temp.exe Julian
+Hello Julian
+```
+
+注意，命令行变元之间必须用**空格**或**制表符**分隔，逗号和分号都不是分隔符。
+
+### 6.5 返回语句
+
+#### 6.5.3 返回指针
+
+返回指针的函数必须明确声明返回的指针类型。
+
+```c
+#include <stdio.h>
+
+char* match(char c, char* s)
+{
+	while (c != *s && *s) s++;
+	return s; //返回一个地址或者NULL
+}
+
+int main(void)
+{
+	char s[10], * p, ch;
+	gets_s(s, 10);
+	ch = getchar();
+	p = match(ch, s);
+	if (p) printf("%s\n", p);
+	else printf("Not found\n");
+	return 0;
+}
+```
+
+### 6.7 递归
+
+```c
+#include <stdio.h>
+
+int factr(int n)
+{
+	if (n == 1) return 1;
+	int answer = factr(n - 1) * n;
+	return answer;
+}
+
+int main(void)
+{
+	printf("%d\n", factr(10));
+	return 0;
+}
+```
+
+C语言不能在函数内再声明函数（python可以，比如装饰器），但是可以在函数内调用函数（当然了），也包括调用自己。
+
+很多情况下递归的速率并不比迭代快，反而会很慢，因为调用的开销很大，还可能导致堆栈溢出。但递归在解决某些算法问题时要比迭代容易得多。
+
+### 6.8 函数原型
+
+```c
+#include <stdio.h>
+
+int sqr(int n);
+
+int main(void)
+{
+	int x = 10;
+	printf("%d %d\n", sqr(x), x);
+	return 0;
+}
+
+int sqr(int n)
+{
+	return n * n;
+}
+```
+
+第二行的`int sqr(int n);`就叫做函数原型。当然如果函数在主函数之前定义了，那么函数定义可以充当函数原型。但那样不规范，如果是文件很大，函数很多的C程序，或者是有很多文件的程序，最好把函数原型写在前面。
+
+**原型能使编译程序提供更强的类型检查**。虽然在C程序中不是必需的，但**在C++中是必需的**。
+
+在C和C++中对函数原型的处理有细微但重要的区别。在C程序中，如果函数原型如下
+
+```c
+int func();
+```
+
+表示该函数的参数列表没有给出，并不代表没有参数。如果没有参数的话会在参数列表填写一个`void`。但在C++中，空参数列表即代表没有参数，所以`void`就很多余了。
+
+### 6.9 定义可变长度的参数表
+
+可以定义参数的类型和数量都可变的函数。为了把传递给一个函数的未知变元数告诉编译程序，我们用三个圆点结束函数形参的声明。例
+
+```c
+int func(int n, ...);
+```
+
+函数定义也可以使用这种声明。
+
+注意，使用可变参数值的任何函数，**至少必须有一个实际的参数**。如下例是非法的
+
+```c
+int func(...); //illegal
+```
+
+### 6.10 “隐含的int”规则
+
+在C89及以前的C版本中，如果一个函数没有声明返回值类型，则默认为`int`类型。但该特性已在C99和C++中舍弃，**强烈不建议在C89版本中省略返回值类型声明，最好还是明确声明**。
+
+### 6.11 参数声明的老式方法和现代方法
+
+```c
+//现代方法
+float func(int a, int b, char ch)
+{
+    /* ... */
+}
+//老式方法
+float func(a, b, ch)
+int a, b;
+char ch;
+{
+    /* ... */
+}
+```
+
+标准C已命令废弃老式的参数声明方法，但有些早期C程序还这样写，所以认识就好，**不要这样写**，而且C++中仅支持现代方法。
+
+### 6.12 inline关键字
+
+C99新加的用于函数的关键字`inline`，可以优化对函数的调用，后面再说。
+
+## 第七章 结构、联合、枚举和用户定义类型
+
+### 7.1 结构
+
+结构是在一个名下引用的多种变量的集合，提供一种把相关数据组合到一起的方便手段。构成结构的变量成为成员，或者元素或者域。通常，结构中的诸成员都是逻辑相关的。例
+
+```c
+struct person
+{
+    char name[30];
+    short age;
+    char sex[10];
+};
+```
+
+注意，**定义结尾有分号**！因为结构定义也是C语句。在这里`person`是结构标记，标识这一特定的数据结构，是结构的类型标识符。也就是说，我们定义了一种新的数据类型！
+
+在结构定义过程中没有任何变量产生，我们声明这种新类型的变量时，可以这样
+
+```c
+struct person student;
+```
+
+这里，`student`就是一个`struct person`型的结构变量。即`person`描述结构，`student`描述对象/实例。
+
+定义结构变量后，程序就会自动为结构的所有成员分配足够的内存。
+
+定义结构的同时可以定义一个或多个对象。
+
+```c
+struct person
+{
+    char name[30];
+    short age;
+    char sex[10];
+} student, teacher;
+```
+
+此时各个结构变量中的成员都有自己单独的内存，它们是相互独立的，不同的。改变一者不会影响另一者。
+
+而如果只需要一个结构变量，则结构标记可以省略，如
+
+```c
+struct
+{
+    char name[30];
+    short age;
+    char sex[10];
+} student;
+```
+
+结构标记和结构变量可以二选一，但必须有一。
+
+#### 7.1.1 存取结构成员
+
+
+
