@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 《C语言大全第4版》笔记
+title: 《C语言大全第4版》笔记（第一部分）
 categories: Programming
 description: 
 keywords: 
