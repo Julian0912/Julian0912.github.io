@@ -1059,7 +1059,7 @@ int putchar(int c);
 
 在`getchar()`的原始形式中，输入先被缓冲，直到键入回车键时才返回。这就是所谓的行缓冲(line-buffer)输入。
 
->   具体表现可能是并不会在你输入一个字符后立即返回，而是允许你输入很多字符但只会取一个字符。xiaduanchengxu
+>   具体表现可能是并不会在你输入一个字符后立即返回，而是允许你输入很多字符但只会取一个字符。
 >
 >   提问：下段程序中的`getchar()`为什么可以这样用？
 
@@ -1308,7 +1308,7 @@ FILE* fopen(const char* filename, const char* mode);
 int fclose(FILE* fp);
 ```
 
-函数返回零值表示关闭成功。
+函数返回**零值**表示关闭成功。
 
 #### 9.6.4 写字符
 
@@ -1346,9 +1346,342 @@ int main(void)
         ch = fgetc(fp);
         putchar(ch);
     } while (ch != EOF);
+    fclose(fp);
     return 0;
 }
 ```
 
+#### 9.6.7 使用feof()
 
+虽然遇到文件末尾时，`getc()`会返回`EOF`，但并不是每次返回`EOF`都意味着到达了文件尾。在二进制文件中也可能存在等于`EOF`值的整数，或者`getc()`失败也会返回`EOF`。为了明确文件是否到达尾部，C语言提供函数`feof()`，原型为
+
+```c
+int feof(FILE* fp);
+```
+
+到达文件尾时，返回**真值**，否则返回零。
+
+#### 9.6.8 用fputs()和fgets()处理串
+
+C语言支持函数`fputs()`和`fgets()`，向文件写读**字符串**。原型
+
+```c
+int fputs(const char* str, FILE* fp);
+char* fgets(char* str, int length, FILE* fp);
+```
+
+`fputs()`出错时会返回`EOF`。`fgets()`读到**新行符**或者`length-1`个字符时结束。遇到新行符时也会把新行符作为串的一部分，而`gets()`不会。例
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+    FILE* fp;
+    char ch[20];
+    if ((fp = fopen("test", "r")) == NULL)
+    {
+        printf("Can't open it.\n");
+        exit(1);
+    }
+    fgets(ch, 20, fp); //也就是说只读一行。
+    printf("%s\n", ch);
+    fclose(fp);
+    return 0;
+}
+```
+
+`fgets()`也会返回一个指针，如果读取失败会返回空指针，如果成功会返回`str`。
+
+>   所以为啥参数里有字符指针了，还要返回一个字符指针呢？经测试两者完全一样啊。
+
+#### 9.6.9 rewind()
+
+重置文件的位置指示于文件开始处，相当于python中的`seek(0)`吧。原型
+
+```c
+void rewind(FILE* fp);
+```
+
+#### 9.6.10 ferror()
+
+每次文件操作（比如读写操作）后都应立即调用`ferror()`，防止错误状态丢失。例如
+
+```c
+ch = getc(fp);
+if (ferror(fp)) /* some statements */;
+```
+
+如果出错，返回**真值**。原型
+
+```c
+int ferror(FILE* fp);
+```
+
+#### 9.6.11 删除文件
+
+删除指定文件，成功返回**零**。原型
+
+```c
+int remove(const char* filename);
+```
+
+#### 9.6.12 对流清仓
+
+`fflush()`对输出流清仓，把输出流上的内容清入文件。原型
+
+```c
+int fflush(FILE* fp);
+```
+
+把缓冲的全部数据写到`fp`指定的文件中。如果用空指针作变元调用`fflush()`，则所有用于输出的打开文件都被清仓。成功返回**零值**。
+
+>   啥叫输出流？
+
+### 9.7 fread()和fwrite()
+
+两个函数允许读写各种类型的数据块。原型
+
+```c
+size_t fread(void* buffer, size_t num_bytes, size_t count, FILE* fp);
+size_t fwrite(const void* buffer, size_t num_bytes, size_t count, FILE* fp);
+```
+
+变元`count`指定读写多少项，每项长度等于`num_bytes`。两个函数返回读写入的项数，出错时可能跟`count`不同。
+
+#### 9.7.1 使用fread()和fwrite()
+
+注意使用`sizeof`确定每种数据的长度。同时**最好检验两个函数的返回值，以确保读写正确**。
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+    FILE* fp;
+    double d = 123.4;
+    double f;
+    if ((fp = fopen("test", "wb+")) == NULL) //注意带着加号，保证可写可读，但b应该是可选的
+    {
+        printf("Can't open it.\n");
+        exit(1);
+    }
+    fwrite(&d, sizeof(double), 1, fp); //注意取地址，因为参数是指针
+    rewind(fp);
+    fread(&f, sizeof(double), 1, fp); //此处都没检验返回值，因为相对简单
+    printf("%f\n", f);
+    fclose(fp);
+    return 0;
+}
+```
+
+两个函数最重要的应用之一是读写用户定义的数据类型，特别是结构。
+
+### 9.8 fseek()和随机存取I/O
+
+原型
+
+```c
+int fseek(FILE* fp, long numbytes, int origin);
+```
+
+`numbytes`是从原点`origin`到新位置的字节数，`origin`取`stdio.h`中定义的三个宏之一：`SEEK_SET`、`SEEK_CUR`、`SEEK_END`。它们分别指文件的开始位置，当前位置，结束位置。
+
+通过`fseek()`可以以任意类型的长度为单位，寻找该类数据项，比如
+
+```c
+fseek(fp, 9*sizeof(int), SEEK_SET);
+```
+
+寻找从文件开始的第10个整型。成功返回**零值**。
+
+使用`ftell()`可以确定文件的当前位置，原型
+
+```c
+long ftell(FILE* fp);
+```
+
+成功返回当前位置，失败返回-1。
+
+一般来说，程序员仅对二进制文件使用随机存取，因为文本文件可能存在字符转换。但如果以`SEEK_SET`为原点位置，也可以对文本文件使用`fseek()`。
+
+对于包含文本的文件，随即存取没啥约束，但对于不包含文本但作为文本文件打开的文件，有约束。
+
+>   挺绕的，看着理解吧。我还是觉得用python处理文件简单些。
+
+### 9.9 fprintf()和fscanf()
+
+除了操作对象不同外，跟`printf()`和`scanf()`完全一样。原型
+
+```c
+int fprintf(FILE* fp, const char* control_string, ...);
+int fscanf(FILE* fp, const char* control_string, ...);
+```
+
+通过以下程序了解其用法吧。
+
+```c++
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+    FILE* fp;
+    char s[20];
+    int t;
+    if ((fp = fopen("test", "w+")) == NULL)
+    {
+        printf("Can't open it.\n");
+        exit(1);
+    }
+    printf("Enter a string and a number: ");
+    fscanf(stdin, "%s %d", s, &t); //从键盘获取
+    fprintf(fp, "%s %d", s, t); //写入文件
+    rewind(fp);
+    fscanf(fp, "%s %d", s, &t); //从文件获取
+    fprintf(stdout, "%s %d", s, t); //写入控制台
+    fclose(fp);
+    return 0;
+}
+```
+
+这两个函数在处理格式化数据时很方便，但效率不是很高，开销要比`fread()`和`fwrite()`大。
+
+### 9.10 标准流
+
+一个C程序开始运行时，自动打开三个流：标准输入`stdin`、标准输出`stdout`和标准错误`stderr`。
+
+标准流是文件指针，所以可以用于文件函数中参数类型是`FILE*`的地方。如
+
+```c
+char s[30];
+fgets(s, 80, stdin);
+```
+
+表示从标准输入，即键盘接受字符串。这样用法要比`gets`安全，因为它限制读入的字符数量，防止溢出，但麻烦是`fgets()`不删除末尾的新行符，需要手动删除并替换为`\0`。
+
+#### 9.10.1 控制台I/O的连接
+
+C语言对控制台I/O和文件I/O基本不加区别，文件也是设备。所以很多操作相通。比如可以理解`stdin`和`stdout`为特殊的文件。
+
+#### 9.10.2 用freopen()重定向标准流
+
+原型
+
+```c
+FILE* freopen(const char* filename, const char* mode, FILE* stream);
+```
+
+>   关于重定向介绍不多，也没搞懂，可能是在命令行里用的，以后再单独研究吧。
+
+## 第十章 预处理程序和注释
+
+### 10.1 预处理程序
+
+ANSI标准定义的预处理程序有以下几种
+
+```c
+#if
+#ifdef
+#ifndef
+#else
+#elif
+#endif
+#define
+#undef
+#line
+#error
+#pragma
+#include
+```
+
+每条预处理指令必须**独占一行**。
+
+### 10.2 #define
+
+定义的宏名字可以在其它宏定义中使用。
+
+```c
+#define ONE 1
+#define TWO ONE+ONE
+```
+
+#### 10.2.1 定义类函数宏
+
+宏名字可以有变元。如
+
+```c
+#include <stdio.h>
+#define ABS(a) (a) < 0 ? -(a) : (a)
+
+int main(void)
+{
+    printf("%d\n", ABS(-1));
+    return 0;
+}
+```
+
+这一形式叫**类函数宏**。优点是提高了代码速度，消除了调用开销，但如果类函数宏的尺寸很大，缺点就是因代码复制而增加了程序规模。因为程序会把所有出现宏的地方都用实际值替换掉。
+
+### 10.3 #error
+
+该指令强制编译程序停止编译，主要用于程序调试。一般形式
+
+```c
+#error error_message
+```
+
+宏串不用双引号包围。
+
+>   不知道怎么用。
+
+### 10.6 #undef
+
+`#undef`删除前面定义的宏名字。
+
+### 10.7 使用defined
+
+`#if defined VAR`等同于`#ifdef VAR`，注意都需要`#endif`来结束条件编译。
+
+使用`defined`的一个原因是，它允许由`#elif`语句确定的宏名字存在。
+
+### 10.8 #line
+
+`#line`改变`__LINE__`和`__FILE__`的内容。两者都是编译程序预定义的标识符。前者的内容是当前被编译代码行的**行号**，后者是当前被编译源文件的**文件名**。`#line`的一般形式
+
+```c
+#line number "filename"
+```
+
+`number`是正整数，`filename`是合法文件标识符。两者可只定义一个或者两个都定义。主要用于调试和特殊应用。
+
+>   不知道有啥用。
+
+### 10.9 #pragma
+
+>   最开始了解到的是`#pragma once`可以防止嵌套文件进入死循环，但貌似还有很多其它用途，用到的时候再研究。
+
+### 10.10 预处理操作符#和##
+
+>   比较麻烦，不多解释，一般用不到，如果用到了，自行搜索。
+
+### 10.11 预定义宏
+
+C规范了五个固有的预定义宏。分别是
+
+```c++
+__LINE__
+__FILE__
+__DATE__ //源代码编译成目标码的时间，形如hour:minute:second
+__TIME__ //源代码编译成目标码的日期，形如month/day/year
+__STDC__ //如果是十进制常数1，则表示编译程序的实现符合标准C
+```
+
+### 10.12 注释
+
+C89只有一种风格的注释，即多行注释。**多行注释不能嵌套**。C99（及C++）支持单行注释。
+
+虽然技术上C89不支持单行注释，但很多编译程序还是接受它们。
 
