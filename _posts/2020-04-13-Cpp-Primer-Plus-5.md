@@ -156,6 +156,124 @@ cout << "Now you have "
 
 ### 2.4 函数
 
+#### 2.4.3 用户定义的函数
+
+C++的函数原型中，形参列表里可以只声明类型和数量，而不必声明形参名称。
+
+C++也不允许函数中再定义函数。
+
+#### 2.4.5 在多函数程序中使用using编译指令
+
+使用名称空间（以`std`为例）的方式有很多种，以下几种的限制逐级加深
+
+* 将`using namespace std;`放在函数定义之前，让文件中所有的函数都能够使用名称空间`std`中所有的元素。
+* 将`using namespace std;`放在特定的函数定义中，让该函数能够使用名称空间`std`中的所有元素。
+* 在特定的函数中使用类似`using std::cout;`这样的编译指令，而不是`using namespace std;`，让该函数只能使用指定的元素。
+* 完全不使用编译指令`using`，在需要使用名称空间`std`中的元素时，使用前缀`std::`。
+
+## 第三章 处理数据
+
+### 3.1 简单变量
+
+#### 3.1.6 整型常量
+
+`cout`在输出数值时默认使用十进制，但也可以看情况修改。如下
+
+```c++
+#include <iostream>
+
+int main()
+{
+    using namespace std;
+    int h = 43;
+    cout << hex;
+    cout << "hex: " << h << endl;
+    cout << dec;
+    int d = 100;
+    cout << "decimal: " << d << endl;
+    return 0;
+}
+```
+
+`hex`、`oct`和`dec`是`std`名称空间内的三个控制符，分别指示`cout`以十六进制、八进制和十进制格式显示整数。
+
+注意，语句`cout << hex;`并不会打印什么东西，而且在一次调整后以后的输出格式都会遵循这次设置，若想重置则需要再次设置（如`cout << dec;`）。
+
+#### 3.1.8 char类型：字符和小整数
+
+`cout`有一个`put()`函数，该函数打印一个字符。如下
+
+```c++
+#include <iostream>
+
+int main()
+{
+    using namespace std;
+    char c = 'M';
+    cout.put(c);
+    return 0;
+}
+```
+
+当然，像这种`cout.put(65);`也是可以的。
+
+可以基于字符的八进制和十六进制编码来使用转义序列。例
+
+```c++
+#include <iostream>
+
+int main()
+{
+    using namespace std;
+    char a = '\n';
+    char b = '\012';
+    char c = '\xa';
+    cout.put(a);
+    cout.put(b);
+    cout.put(c);
+    return 0;
+}
+```
+
+因为换行符的ASCII码为10，八进制为12，十六进制为a，所以以上`a`、`b`和`c`都打印换行符。
+
+但是一般使用**符号转义序列**（即`\n`），因为可读性强，而且符号适用于任何编码方式。比如`\n`在任何编码方式里都表示换行符，但数字10可能只在ASCII码中才表示换行符（虽然事实可能并非如此，但可能会有其它符号符合这种情况）。
+
+退格符的某种应用（挺有意思的）：
+
+```c++
+#include <iostream>
+
+int main()
+{
+    using namespace std;
+    cout << "Enter your code: ____\b\b\b\b";
+    long code;
+    cin >> code;
+    cout << "Your have entered " << code << "...\n";
+    return 0;
+}
+```
+
+8位`char`可以表示基本字符集，另一种类型`wchar_t`（宽字符类型）可以表示扩展字符集。
+
+`wchar_t`类型是一种整数类型，它有足够的空间，可以表示系统使用的最大扩展字符集。这种类型与另一种整型（底层类型）的长度
+和符号属性相同。对底层类型的选择取决于实现，因此在一个系统中，它可能是`unsigned short`，而在另一个系统中，则可能是`int`。
+
+`cin`和`cout`将输入和输出看作是`char`流，因此不适于用来处理`wchar_t`类型。`iostream`头文件的最新版本提供了作用相似的工具`wcin`和`wcout`，可用于处理`wchar_t`流。
+
+另外，可以通过加上前缀`L`来指示宽字符常量和宽字符串。如
+
+```c++
+wchar_t wc = L'M';
+wcout << wc << endl;
+```
+
+宽字符集在使用Unicode或ISO 10646时会比较有用。
+
+### 3.2 const限定符
+
+
 
 
 
