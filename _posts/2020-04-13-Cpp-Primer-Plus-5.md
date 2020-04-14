@@ -273,6 +273,256 @@ wcout << wc << endl;
 
 ### 3.2 const限定符
 
+C++中可以使用`const`来修饰常量，并且比`#define`要好，因为它可以限定常量的作用域和类型。
+
+```c++
+#include <iostream>
+
+int main()
+{
+    using namespace std;
+    const int MONTHS = 12;
+    cout << MONTHS << endl;
+    return 0;
+}
+```
+
+>   但会不会出现C中那种可以通过指针修改常量而造成常量不安全的问题呢？
+
+### 3.3 浮点数
+
+计算机将带小数的数字分成两部分存储。一部分表示值，另一部分用于对值进行放大或缩小。
+
+打个比方，对于数字34.1245和34124.5，它们除了小数点的位置不同外，其他都是相同的。可以把第一个数表示为0.341245（基准值）和
+100（缩放因子），而将第二个数表示为0.341245（基准值相同）和10000（缩放因子更大）。缩放因子的作用是移动小数点的位置，术语浮点因此而得名。
+
+对于C++来说，数字存储基于二进制，因此缩放因子是2的幂。
+
+### 3.4 C++算术操作符
+
+如果`/`操作符两边的操作数都是整数，则商也为整数，即丢弃掉小数部分。
+
+`%`操作符两边必须是整数，不能是浮点数。（python中可以是浮点数，其求模算法同时支持正负和小数）
+
+对于`float`，C++只保证6位有效位。有效位不是指小数位，而是指有意义的六位数。比如61.2400有4个有效位，12000.0只有两个有效位，但40342.242保证6个有效位后四舍五入为40342.2。
+
+#### 3.4.4 类型转换
+
+C++中的强制类型转换有三种，如下
+
+```c++
+int n = 100;
+long g1 = (long)n;
+long g2 = long(n);
+long g3 = static_cast<long>(n);
+```
+
+第一种来源于C，第二种是纯粹的C++风格。第三种是非常严格的一种强制类型转换，后面会讲。
+
+## 第四章 复合类型
+
+### 4.1 数组
+
+注意以下数组初始化的区别
+
+```c++
+int arr1[100]; //未初始化，元素值不明
+int arr2[100] = {1}; //第一个元素初始化为1，其它元素为0
+int arr3[100] = {0}; //所有元素都被初始化为0
+```
+
+### 4.2 字符串
+
+#### 4.2.1 拼接字符串常量
+
+以下三个字符串的输出相同
+
+```c++
+cout << "hello" "world\n"; //程序会忽略两个字符串间的空格和换行
+cout << "hello"
+    "world\n";
+cout << "helloworld\n";
+```
+
+#### 4.2.3 字符串输入
+
+`cin`使用空白（空格、制表符和换行符）来定字符串的界。所以`cin`在从键盘获取字符串时只读取一个单词。
+
+#### 4.2.4 每次读取一行字符串输入
+
+`cin`对象下的成员函数`getline()`可以读取一行字符串。它以**换行符**标记结束，因此可以读入空格。但它读入时会**把换行符舍弃掉**，并以`\0`代替之（即标记字符串结束的0）。例
+
+```c++
+#include <iostream>
+
+int main()
+{
+    using namespace std;
+    char name[20];
+    char name2[20];
+    cout << "first name:\n";
+    cin.getline(name, 20);
+    cout << "second name:\n";
+    cin.getline(name2, 20);
+    cout << name << " " << name2 << endl;
+    return 0;
+}
+```
+
+`getline()`接收两个参数，第一个是存储字符串的变量，第二个是读取字符的数量。该函数要么遇到换行符结束读取，要么达到最大字符数停止读取。假设第二个参数为20，则函数只读取前19个字符，最后一个设为`\0`。
+
+另一个类似的函数为`get()`，与`getline()`稍不同的是，它不会把换行符舍弃掉，而是让它继续**留在输入队列里**。因此，如果单纯把上一段代码中的`getline`换成`get`，程序将不能正确读取第二次输入。因为`get()`也是把换行符当作结束标记，而在第一次输入时因为把换行符留在了输入队列里，所以第二次输入时看到的第一个字符就是换行符，然后直接结束输入了。
+
+解决办法就是用一个没有参数的`cin.get()`函数，它是`get()`的一个变体（实际上它有很多变体，表现为参数不同），可以接收换行符，即把换行符从输入队列里拿掉，所以代码如下，可以正常使用
+
+```c++
+#include <iostream>
+
+int main()
+{
+    using namespace std;
+    char name[20];
+    char name2[20];
+    cout << "first name:\n";
+    cin.get(name, 20);
+    cin.get(); //接收了一个换行符
+    cout << "second name:\n";
+    cin.get(name2, 20);
+    cout << name << " " << name2 << endl;
+    return 0;
+}
+```
+
+值得注意的一点是，`cin.get()`本身会返回一个`cin`对象，因此它又可以调用`get()`，所以上段代码的第一次输入可以写为
+
+```c++
+cin.get(name, 20).get();
+```
+
+这样就省去了单独写一个`cin.get();`。同样，`cin.getline()`也可以这样操作。
+
+乍一看貌似`cin.getline()`要比`cin.get()`简单多，但实际上，后者因为能接收换行符，所以可以判断字符串是因为遇到换行符所以停止读入的，还是因为字符串超出容量所以切断读入的。
+
+#### 4.2.5 混合输入字符串和数字
+
+观察如下代码
+
+```c++
+#include <iostream>
+
+int main()
+{
+    using namespace std;
+    cout << "What year?\n";
+    int year;
+    cin >> year;
+    cout << "What name?\n";
+    char name[20];
+    cin.getline(name, 20);
+    cout << "The year is " << year << ", and the name is " << name << endl;
+    return 0;
+}
+```
+
+依然没有机会进行第二次输入，因为`cin >> year;`也会把换行符留在输入队列里，这样第二次输入时刚开始就结束了。
+
+解决办法可以是把该语句换为`(cin >> year).get();`，因为`cin >> year`也返回一个`cin`对象。
+
+但是C++里一般用指针操作字符串，而非数组。
+
+>   感觉这里白讲这么多了……
+
+### 4.3 string类简介
+
+`string`类**位于名称空间`std`中**。使用时**需要包含头文件`string`**。
+
+```c++
+#include <iostream>
+#include <string>
+
+int main()
+{
+    using namespace std;
+    string str = "hello world";
+    cout << str << endl;
+    cout << "Your name?\n";
+    string name;
+    cin >> name;
+    cout << "Hello, " << name << endl;
+    cout << "The first letter of your name is " << name[0] << endl;
+    return 0;
+}
+```
+
+#### 4.3.1 赋值、拼接和附加
+
+`string`对象可以使用`+`或`+=`进行字符串的拼接，但字符数组不能。
+
+#### 4.3.2 string类的其它操作
+
+求字符串长度
+
+```c++
+string str = "hello";
+cout << str.size() << endl;
+```
+
+在C中使用`strlen()`函数来求长度，该函数在C++的`cstring`头文件里，接收目标字符串为参数。
+
+#### 4.3.3 string类I/O
+
+`string`对象在**初始化前长度为0**。在使用`cin`读取时依然会遇到空白就结束，因此在读取一行时，要这样处理
+
+```c++
+#include <iostream>
+#include <string>
+
+int main()
+{
+    using namespace std;
+    string name;
+    getline(cin, name);
+    cout << "Hello, " << name << ".\n";
+    return 0;
+}
+```
+
+`getline()`函数包含在头文件`string`中，在名称空间`std`中。它接收`cin`和一个字符串变量为参数，不需要指定长度了。
+
+### 4.4 结构简介
+
+```c++
+#include <iostream>
+#include <string>
+
+int main()
+{
+    using namespace std;
+    struct person
+    {
+        string name;
+        int age;
+        double wage;
+    };
+    person stu = { "Jack", 19, 100.0 };
+    person tea =
+    {
+        "Karl",
+        23,
+        3000.0
+    };
+    cout << stu.name << " is " << stu.age << " years old.\n";
+    cout << tea.name << " owns " << tea.wage << " per week.\n";
+    return 0;
+}
+```
+
+结构的使用与C基本无异，但是在C++中，结构变量的声明可以省略关键字`struct`。
+
+但C++建议把结构放在全局的位置，而非在`main`函数内，若如此，注意要使用`string`对象需要引入名称空间`std`。
+
+#### 4.4.4 结构数组
+
 
 
 
