@@ -523,7 +523,121 @@ int main()
 
 #### 4.4.4 结构数组
 
+```c++
+#include <iostream>
+#include <string>
 
+int main()
+{
+    using namespace std;
+    struct person
+    {
+        string name;
+        int age;
+        double wage;
+    };
+    person students[2] =
+    {
+        {"Jack", 19, 3000.0},
+        {"Karl", 20, 2000.0}
+    };
+    cout << students[0].name << " is " << students[0].age << " years old.\n";
+    cout << students[1].name << " owns " << students[1].wage << " per week.\n";
+    return 0;
+}
+```
+
+### 4.5 共用体
+
+就是联合，翻译不同……
+
+可以这样理解，一个联合内有多种不同的变量类型，一个联合变量可以多次赋值，每次可以赋值为不同的类型，但只能存储一种类型，因此联合的大小是所有类型中最大的那个。
+
+```c++
+#include <iostream>
+
+int main()
+{
+    using namespace std;
+    union one4all
+    {
+        int i_var;
+        float f_var;
+        char c_var[20];
+    };
+    one4all var;
+    var.i_var = 15;
+    cout << var.i_var << endl;
+    var.f_var = 16.5f;
+    cout << var.f_var;
+    return 0;
+}
+```
+
+假设有批商品id中有些是整型，有些是字符串，则可以设置一个整型和字符串的联合，来存储这批商品id。
+
+### 4.6 枚举
+
+```c++
+#include <iostream>
+
+int main()
+{
+    using namespace std;
+    enum colors { red, orange, yellow, green, teal, blue, purple };
+    colors book = orange;
+    enum bits { one = 1, two = 2, four = 4, eight = 8 };
+    enum vars {zero, null, none = 0, first};
+    vars v = null;
+    cout << v; //实际输出1
+    return 0;
+}
+```
+
+严格来说，枚举类型没有算术操作，枚举变量一般用于`switch`。
+
+#### 4.6.2 枚举的取值范围
+
+上限：找到枚举量的最大值，找到大于这个最大值的最小的2的幂，减去1，就是这个枚举的取值上限。例最大值为101，则比它大的最小的2的幂是128，因此该枚举的取值上限是127。
+
+下限：找到枚举量的最小值，如果该最小值大于0，则取值下限为0，如果小于0，则找小于这个最小值的最大的2的幂，加上1，就是这个枚举的取值上限。例最小值-6，则比它小的最大的2的幂是-8，因此该枚举的取值下限为-7。
+
+在C++中可以通过**强制转换**把不属于枚举值但在枚举取值范围内的**整型**赋值给枚举变量。
+
+```c++
+enum bits { one = 1, two = 2, four = 4, eight = 8 };
+bits var = bits(6);
+```
+
+### 4.7 指针和自由存储空间
+
+#### 4.7.2 指针的危险
+
+一定要在对指针应用解除引用操作符（*）之前，将指针初始化为一个确定的、适当的地址。
+
+#### 4.7.5 使用delete来释放内存
+
+```c++
+#include <iostream>
+
+int main() {
+    using namespace std;
+    int *p = new int;
+    *p = 10;
+    cout << "The address is " << p << ", the value is " << *p << endl;
+    delete p; //该语句并不会删除指针p，而是释放了p的内存，这样程序再次申请内存时还可以找到这块内存
+    *p = 20;
+    cout << "Second life: \n";
+    cout << "The address is " << p << ", the value is " << *p << endl;
+    return 0;
+}
+```
+
+注意，**`delete`只能释放由`new`申请的内存**。而且，对于不再使用的内存块，最好**释放它**，防止内存溢出。
+
+因此，`new`和`delete`总是成对出现。
+
+#### 4.7.6 使用new来创建动态数组
 
 
 
