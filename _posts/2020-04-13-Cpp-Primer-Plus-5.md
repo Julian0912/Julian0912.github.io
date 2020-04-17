@@ -639,6 +639,125 @@ int main() {
 
 #### 4.7.6 使用new来创建动态数组
 
+对于一些小数据，可以直接创建变量，此时内存会被分配，不管这个变量用到了没有。
+
+如果使用`new`创建，则只在需要的时候才会占用内存，因此适合大数据。
+
+对于用`new`创建的数组，称为动态数组
+
+```c++
+int *p = new int[10];
+```
+
+指针`p`获得数组的第一个元素地址。并且在运行时才会确定大小。（普通数组在编译时就会确定大小）
+
+也就是说，这个10可以是一个其它**变量**，其值随运行结果而定。
+
+注意，使用完后要释放内存，**`new`和`delete`总是成对出现的**。
+
+```c++
+delete[]p; //删除数组要加方括号，删除普通指针不用
+```
+
+观察下段代码，体会使用指针操作数组与使用数组名操作数组的不同。
+
+```c++
+#include <iostream>
+
+int main() {
+    using namespace std;
+    int *p = new int[10];
+    p[0] = 3;
+    p[1] = 5;
+    p[2] = 8;
+    cout << "p[0] is " << p[0] << endl;
+    p = p + 1;
+    cout << "Now p[0] is " << p[0] << ", and p[1] is " << p[1] << endl;
+    p = p - 1; //将指针移回起点，确保delete能正确释放内存
+    delete[]p;
+    return 0;
+}
+```
+
+### 4.8 指针、数组和指针算术
+
+#### 4.8.2 指针和字符串
+
+C风格的字符串处理
+
+```c++
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+char *get_name();
+
+int main() {
+    char *name;
+    name = get_name();
+    cout << name << " at " << (int *) name << endl;
+    delete name; //一般不把new和delete分开，但分开也可以，只是不推荐
+    name = get_name();
+    cout << name << " at " << (int *) name << endl;
+    delete name;
+    return 0;
+}
+
+char *get_name() {
+    char temp[80];
+    cout << "Enter your name:";
+    cin >> temp;
+    char *pn = new char[strlen(temp) + 1]; //不可以直接char *pn;
+    strcpy(pn, temp);
+    return pn;
+}
+```
+
+要注意的问题很多，要解释起来也很麻烦，因此不如用C++的`string`库。（上段代码**可能**有诸多问题）
+
+#### 4.8.3 使用new创建动态结构
+
+在用指针操作结构时，要用到`->`操作符，如果用结构名操作结构，则用`.`操作符。
+
+```c++
+#include <iostream>
+
+int main() {
+    using namespace std;
+    struct person {
+        char name[20];
+        int age;
+        double wage;
+    };
+    person *p = new person;
+    cout << "Enter the name:";
+    cin >> (*p).name; //(*p)相当于结构变量名
+    cout << "Enter the age:";
+    cin >> (*p).age;
+    cout << "Enter the wage:";
+    cin >> (*p).wage;
+    cout << "Name: " << p->name << endl //指针操作
+        << "Age: " << p->age << endl
+        << "Wage: " << p->wage << endl;
+    delete p; //释放内存
+    return 0;
+}
+```
+
+#### 4.8.4 自动存储、静态存储和动态存储
+
+自动存储指在特定代码块内活动的变量，它们在代码块运行结束后会自动释放空间。
+
+静态存储指在整个程序运行周期内都存在的存储方式。比如静态变量。
+
+动态存储有别于前两种，它们在内存的一片自由区域（堆），由`new`分配和`delete`释放。
+
+如果不释放将可能导致内存泄漏，将十分严重，用完了**一定要释放**！
+
+## 第五章 循环和关系表达式
+
+
 
 
 
