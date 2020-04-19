@@ -757,6 +757,46 @@ int main() {
 
 ## 第五章 循环和关系表达式
 
+### 5.1 for循环
+
+#### 5.1.1 for循环的组成部分
+
+C++认为赋值表达式的值就是赋值操作符左边的值，因此可以有这样的语句
+
+```c++
+x = (y = 3) + 4;
+```
+
+虽然支持这样写，但并**不鼓励**这样写。
+
+`bool`类型在输出时会默认转换为整型，要保持布尔型，则
+
+```c++
+#include <iostream>
+
+int main() {
+    using namespace std;
+    int x = 10;
+    cout << "The value of (x < 3) is ";
+    cout << (x < 3) << endl;
+    cout.setf(ios_base::boolalpha); //显示bool字面量
+    cout << "Now the value of (x < 3) is ";
+    cout << (x < 3) << endl;
+    return 0;
+}
+```
+
+一条表达式加上一个分号就会变成一条语句。但不是所有语句去掉分号都会变成表达式。
+
+按理说声明语句去掉分号就不是表达式，但C++的`for`循环支持循环内声明初始化值。
+
+```c++
+for (int i = 0; i < 5; i++)
+    cout << "Now i is " << i << endl;
+```
+
+#### 5.1.2 回到for循环
+
 
 
 
