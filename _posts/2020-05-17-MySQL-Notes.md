@@ -51,7 +51,7 @@ USE test_db;
 ##### 例6：创建数据表
 
 ```mysql
-CREATE TABLE use_info(
+CREATE TABLE user_info(
     id INT NOT NULL,
     name VARCHAR(10) NOT NULL,
     sex CHAR(2),
@@ -63,23 +63,29 @@ CREATE TABLE use_info(
 
 ##### 例7：数据库数据类型
 
-<img src="../images/posts/MySQL_N/MySQL数值类型.png" alt="numbers" style="zoom:60%;" />
+<img src="/images/posts/MySQL_N/MySQL数值类型.png" alt="numbers" style="zoom:60%;" />
 
-<img src="../images/posts/MySQL_N/MySQL字符串类型.png" alt="numbers" style="zoom:60%;" />
+数值类型常见的有`INT`，`FLOAT`，`DOUBLE`。
 
-<img src="../images/posts/MySQL_N/MySQL日期时间类型.png" alt="numbers" style="zoom:60%;" />
+<img src="/images/posts/MySQL_N/MySQL字符串类型.png" alt="strings" style="zoom:60%;" />
+
+常用的字符串类型有`CHAR`，`VARCHAR`。
+
+<img src="/images/posts/MySQL_N/MySQL日期时间类型.png" alt="datetime" style="zoom:60%;" />
+
+日期时间类型中常用的有`DATE`，`TIME`，`DATETIME`，其中`DATETIME`最常用。
 
 ##### 例8：Navicat新建查询
 
-<img src="../images/posts/MySQL_N/navi00.png" alt="navi01" style="zoom:60%;" />
+<img src="/images/posts/MySQL_N/navi00.png" alt="navi00" style="zoom:60%;" />
 
 点击**查询**，点击**新建查询**，
 
-<img src="../images/posts/MySQL_N/navi01.png" alt="navi01" style="zoom:60%;" />
+<img src="/images/posts/MySQL_N/navi01.png" alt="navi01" style="zoom:60%;" />
 
 输入命令，点击**运行**，
 
-<img src="../images/posts/MySQL_N/navi02.png" alt="navi01" style="zoom:60%;" />
+<img src="/images/posts/MySQL_N/navi02.png" alt="navi02" style="zoom:60%;" />
 
 运行前可以先保存，名称一般为数据库名称。当然如果有些固定的很长的查询步骤可以单独保存成其它名字的文件。
 
@@ -87,7 +93,7 @@ CREATE TABLE use_info(
 
 如果运行后没有发现新的数据表，则在**表**处右键刷新一下。
 
-<img src="../images/posts/MySQL_N/navi03.png" alt="navi01" style="zoom:60%;" />
+<img src="/images/posts/MySQL_N/navi03.png" alt="navi03" style="zoom:60%;" />
 
 ##### 例9：主键
 
@@ -99,4 +105,16 @@ CREATE TABLE test(
 ```
 
 主键以`PRIMARY KEY`标识，一个数据表只能有一个主键，且主键的值都不重复。一般来说，一个主键对应一个字段。（一个主键也可以对应多个字段）
+
+##### 例10：Navicat设计表
+
+<img src="/images/posts/MySQL_N/navi04.png" alt="navi04" style="zoom:60%;" />
+
+选择一个数据表右键点击**设计表**，可以可视化修改字段类型等信息。
+
+##### 例11：插入数据
+
+```mysql
+INSERT INTO user_info(id, uname, sex, age) VALUES (1, 'fmy', 'm', 20);
+```
 
