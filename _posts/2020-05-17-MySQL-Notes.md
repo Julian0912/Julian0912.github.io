@@ -1,0 +1,102 @@
+---
+layout: post
+title: MySQL学习笔记
+categories: Programming
+description: 
+keywords: 
+---
+
+*一直拖了好久的数据库学习，本来是觉得一直用不到所以就没学，但发现Navicat挺好的，所以还是学一学吧。*
+
+<!--more-->
+
+##### 例1：登录
+
+进入MySQL的bin目录，输入以下登录MySQL（若MySQL没启动则输入net start mysql，或者输入services.msc手动开启）
+
+```
+~\bin>mysql -u root -p <密码>
+```
+
+##### 例2：查看已有的数据库
+
+```mysql
+SHOW DATABASES;
+```
+
+注意：**分号不能漏！**`DATABASES`是复数！
+
+##### 例3：创建新数据库
+
+```mysql
+CREATE DATABASE test_db;
+```
+
+`test_db`是一个新数据库的名字。
+
+注意：数据库名字**不区分**大小写！`DATABASE`是单数！
+
+##### 例4：删除数据库
+
+```mysql
+DROP DATABASE test_db;
+```
+
+##### 例5：选择数据库
+
+```mysql
+USE test_db;
+```
+
+##### 例6：创建数据表
+
+```mysql
+CREATE TABLE use_info(
+    id INT NOT NULL,
+    name VARCHAR(10) NOT NULL,
+    sex CHAR(2),
+    age INT
+);
+```
+
+`	CHAR`和`VARCHAR`地区别后面有，这里简单说的话，就是前者是定长字符串，若输入不足长度则用空格填充，在输出时删去尾部空格；后者是变长字符串，长度不足不会用空格填充，输出时也会保留尾部空格。前者效率高，常用于长度变化不大且需要快速查询的数据，后者效率偏低，会在长度超出限制时将类型强制转换成`TEXT`型。
+
+##### 例7：数据库数据类型
+
+<img src="../images/posts/MySQL_N/MySQL数值类型.png" alt="numbers" style="zoom:60%;" />
+
+<img src="../images/posts/MySQL_N/MySQL字符串类型.png" alt="numbers" style="zoom:60%;" />
+
+<img src="../images/posts/MySQL_N/MySQL日期时间类型.png" alt="numbers" style="zoom:60%;" />
+
+##### 例8：Navicat新建查询
+
+<img src="../images/posts/MySQL_N/navi00.png" alt="navi01" style="zoom:60%;" />
+
+点击**查询**，点击**新建查询**，
+
+<img src="../images/posts/MySQL_N/navi01.png" alt="navi01" style="zoom:60%;" />
+
+输入命令，点击**运行**，
+
+<img src="../images/posts/MySQL_N/navi02.png" alt="navi01" style="zoom:60%;" />
+
+运行前可以先保存，名称一般为数据库名称。当然如果有些固定的很长的查询步骤可以单独保存成其它名字的文件。
+
+运行后会显示反馈信息，报错与否就知道了。
+
+如果运行后没有发现新的数据表，则在**表**处右键刷新一下。
+
+<img src="../images/posts/MySQL_N/navi03.png" alt="navi01" style="zoom:60%;" />
+
+##### 例9：主键
+
+```mysql
+CREATE TABLE test(
+    id INT NOT NULL PRIMARY KEY,
+    name VARCHAR(10) NOT NULL
+);
+```
+
+主键以`PRIMARY KEY`标识，一个数据表只能有一个主键，且主键的值都不重复。一般来说，一个主键对应一个字段。（一个主键也可以对应多个字段）
+
