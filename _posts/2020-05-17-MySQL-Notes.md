@@ -152,3 +152,65 @@ DELETE FROM user_info WHERE uname = 'vm';
 
 如果没加条件，则表示删除所有信息。
 
+##### 例14：查询数据
+
+```mysql
+SELECT uname, age FROM user_info;
+```
+
+特殊的，如果要查询一个数据表中的所有字段，可以使用`*`代替，即
+
+```mysql
+SELECT * FROM user_info;
+```
+
+但尽量不使用`*`，因为它**效率要低**。一般需要什么字段，就查询什么字段。
+
+查询语句可以在后面添加`WHERE`条件。
+
+```mysql
+SELECT * FROM user_info WHERE age > 20;
+```
+
+##### 例15：更新数据
+
+```mysql
+UPDATE user_info SET sex = 'm' WHERE uname = 'vm3';
+```
+
+如果修改信息本身就类似于`SET uname='vm4' WHERE uname='vm3'`。
+
+如果不加条件，则表示修改所有字段。
+
+如果一次修改多个字段，则
+
+```mysql
+UPDATE user_info SET sex = 'f', age = 65 WHERE uname = 'vm3';
+```
+
+##### 例16：AVG函数
+
+```mysql
+SELECT AVG(age) FROM user_info;
+```
+
+求`age`字段的平均值。本质上也是一个**查询语句**，所以用`SELECT`。
+
+如果需要给结果附一个别名，则可以
+
+```mysql
+SELECT AVG(age) AS 'Average Age' FROM user_info;
+```
+
+**如果别名只有一个单词，可以不加引号。**而且推荐只用一个单词，若包含多个则使用驼峰命名法或下划线分隔。
+
+同样后面可以跟条件。
+
+```mysql
+SELECT AVG(age) AS 'Average Age of Man' FROM user_info WHERE sex = 'm';
+```
+
+其它常用函数有`COUNT()`，`MAX()`，`MIN()`，`SUM()`等。
+
+
+
