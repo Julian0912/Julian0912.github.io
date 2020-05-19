@@ -42,6 +42,15 @@ CREATE DATABASE test_db;
 DROP DATABASE test_db;
 ```
 
+如果想在删除之前先查看存不存在，可以
+
+```mysql
+DROP DATABASE IF EXISTS sd_db;
+CREATE DATABASE sd_db CHARACTER SET utf8mb4;
+```
+
+第二句表示设置数据库编码为utf8。
+
 ##### 例5：选择数据库
 
 ```mysql
@@ -211,6 +220,78 @@ SELECT AVG(age) AS 'Average Age of Man' FROM user_info WHERE sex = 'm';
 ```
 
 其它常用函数有`COUNT()`，`MAX()`，`MIN()`，`SUM()`等。
+
+##### 例17：条件查询
+
+```mysql
+SELECT * FROM user_info WHERE age = (SELECT MAX(age) FROM user_info);
+```
+
+条件查询可以这样写，语句会返回信息。
+
+##### 例18：模糊查询
+
+```mysql
+SELECT * FROM user_info WHERE uname LIKE 'f%';
+```
+
+注意使用`LIKE`关键字。`%`表示任意0个或多个字符，`_`表示一个字符。
+
+模糊查询也可以用逻辑运算。
+
+```mysql
+SELECT * FROM user_info WHERE uname LIKE '%m%' AND age < 100;
+```
+
+##### 例19：范围查询
+
+```mysql
+SELECT * FROM user_info WHERE age BETWEEN 20 AND 30;
+```
+
+这是一个连续查询，使用关键字`BETWEEN`和`AND`。
+
+注意：**包含边界**。
+
+```mysql
+SELECT * FROM user_info WHERE age IN (15, 25, 35, 45);
+```
+
+这是一个不连续查询。反向的话在`IN`前加`NOT`。
+
+注意：一般括号里不会写固定的值，而是其它SQL语句，即通过其它语句返回的值来限定条件。即子查询。
+
+```mysql
+SELECT * FROM user_info WHERE sex IS NULL;
+```
+
+这是一个空判断。反向的话在`IS`后加`NOT`。
+
+##### 例20：自增
+
+```mysql
+CREATE TABLE users(
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    u_name VARCHAR(20) NOT NULL
+);
+```
+
+如同id这种字段，通常连续且不能重复，也不要有间隔，所以设置为自增最好。
+
+关键字`AUTO_INCREMENT`，官方术语叫**标识列**。
+
+在插入时，自增字段可以不写
+
+```mysql
+INSERT INTO stu_info(stu_name, stu_num, sex, phone, birthday)
+VALUES ('囡囡', '20180007', '女', NULL, '2002-03-04');
+```
+
+
+
+
+
+
 
 
 
