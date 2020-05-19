@@ -115,11 +115,17 @@ CREATE TABLE test(
 
 主键以`PRIMARY KEY`标识，一个数据表只能有一个主键，且主键的值都不重复。一般来说，一个主键对应一个字段。（一个主键也可以对应多个字段）
 
-##### 例10：Navicat设计表
+##### 例10：Navicat设计表/命令行描述表
 
 <img src="/images/posts/MySQL_N/navi04.png" alt="navi04" style="zoom:60%;" />
 
 选择一个数据表右键点击**设计表**，可以可视化修改字段类型等信息。
+
+在命令行中，使用关键字`DESCRIBE`或`DESC`查看字段属性。
+
+```mysql
+DESC user_info;
+```
 
 ##### 例11：插入数据
 
@@ -143,7 +149,7 @@ INSERT INTO user_info VALUES (7, 'vm3', 'f', 31);
 
 **但不建议这样用**，因为容易疏漏。
 
-##### 例12：Navicat添加注释
+##### 例12：添加注释
 
 ```
 -- this is a comment
@@ -270,9 +276,13 @@ SELECT * FROM user_info WHERE sex IS NULL;
 ##### 例20：自增
 
 ```mysql
-CREATE TABLE users(
+CREATE TABLE stu_info(
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    u_name VARCHAR(20) NOT NULL
+    stu_name VARCHAR(20) NOT NULL,
+    stu_num CHAR(8),
+    sex CHAR(2),
+    phone CHAR(11),
+    birthday DATE
 );
 ```
 
@@ -280,18 +290,37 @@ CREATE TABLE users(
 
 关键字`AUTO_INCREMENT`，官方术语叫**标识列**。
 
-在插入时，自增字段可以不写
+在插入时，自增字段可以不写，建议不要手动写
 
 ```mysql
 INSERT INTO stu_info(stu_name, stu_num, sex, phone, birthday)
 VALUES ('囡囡', '20180007', '女', NULL, '2002-03-04');
 ```
 
+##### 例21：外键
 
+```mysql
+CREATE TABLE ss_info(
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    stu_id INT,
+    sub_id INT,
+    FOREIGN KEY(stu_id) REFERENCES stu_info(id),
+    FOREIGN KEY(sub_id) REFERENCES sub_info(id)
+);
+```
 
+外键用于链接两个有关系的表，一个是主表，另一个是从表。像上一个，表`stu_info`是主表，`ss_info`是从表。
 
+具体而准确的解释可以自行搜索。
 
+注意：若想这样使用外键，需要设置MySQL的配置文件`my.ini`中
 
+```ini
+# 创建新表时将使用的默认存储引擎
+default-storage-engine=INNODB
+```
 
+**外键约束**会在添加的外键不合理时报错。
 
+比如此处`ss_info`表中的`stu_id`字段的值必须是`stu_info`表中存在的`id`字段值，若不存在则会添加失败并报错。
 
