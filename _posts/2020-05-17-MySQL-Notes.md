@@ -149,6 +149,12 @@ INSERT INTO user_info VALUES (7, 'vm3', 'f', 31);
 
 **但不建议这样用**，因为容易疏漏。
 
+对于每次都插入**相同数量和类型**的数据，可以这样简写：
+
+```mysql
+INSERT INTO user_info(uname, sex, age) VALUES('fmy', 'm', 21), ('fzr', 'm', 44), ('fmx', 'f', 15), ('xly', 'f', 45);
+```
+
 ##### 例12：添加注释
 
 ```
@@ -323,4 +329,12 @@ default-storage-engine=INNODB
 **外键约束**会在添加的外键不合理时报错。
 
 比如此处`ss_info`表中的`stu_id`字段的值必须是`stu_info`表中存在的`id`字段值，若不存在则会添加失败并报错。
+
+##### 例22：排序
+
+```mysql
+SELECT name, age, salary, phone FROM employee ORDER BY salary DESC;
+```
+
+`ORDER BY`关键字可以用来排序，默认升序`ASC`，可以指定为降序`DESC`。
 
