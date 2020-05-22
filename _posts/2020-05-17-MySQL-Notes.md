@@ -233,13 +233,13 @@ SELECT AVG(age) AS 'Average Age of Man' FROM user_info WHERE sex = 'm';
 
 其它常用函数有`COUNT()`，`MAX()`，`MIN()`，`SUM()`等。
 
-##### 例17：条件查询
+##### 例17：子查询
 
 ```mysql
 SELECT * FROM user_info WHERE age = (SELECT MAX(age) FROM user_info);
 ```
 
-条件查询可以这样写，语句会返回信息。
+条件查询可以这样写，这种叫子查询，即根据返回的信息确定查询条件。
 
 ##### 例18：模糊查询
 
@@ -303,6 +303,8 @@ INSERT INTO stu_info(stu_name, stu_num, sex, phone, birthday)
 VALUES ('囡囡', '20180007', '女', NULL, '2002-03-04');
 ```
 
+注意，默认情况下，哪怕标识列中的某个值已经删除，它还是会占据位置。比如删除了id为6的记录，下一条记录自增时还是会从7开始。
+
 ##### 例21：外键
 
 ```mysql
@@ -330,6 +332,10 @@ default-storage-engine=INNODB
 
 比如此处`ss_info`表中的`stu_id`字段的值必须是`stu_info`表中存在的`id`字段值，若不存在则会添加失败并报错。
 
+如果要删除主表的某个数据，则必须先把从表中相关的外键删掉，才能在主表中删除成功。
+
+注意：从表的外键可以是任何字段，但链接到主表的字段**必须是主键**。
+
 ##### 例22：排序
 
 ```mysql
@@ -337,4 +343,16 @@ SELECT name, age, salary, phone FROM employee ORDER BY salary DESC;
 ```
 
 `ORDER BY`关键字可以用来排序，默认升序`ASC`，可以指定为降序`DESC`。
+
+##### 例23：分组查询
+
+```mysql
+SELECT sub_type, COUNT(sub_name) AS sub_count FROM sub_info GROUP BY sub_type;
+```
+
+根据`sub_type`的种类分类，计算每类`sub_name`的数量。
+
+实际上这里的`sub_name`可以是任何字段，意义都是每种`sub_type`分类的数量。换做`*`也是可以的，但最好还是写个具体的字段。
+
+所以可以看出来，`GROUP BY`一定要与聚合函数一起使用。聚合函数即之前说过的四个常用函数。
 
